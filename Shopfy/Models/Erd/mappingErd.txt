@@ -1,0 +1,62 @@
+﻿
+Category (
+	Id* , 
+	CategoryName ,
+	CategoryDescription
+)
+
+SubCategory ( Id* ,
+	CategroyId** , 
+	CategorySubName ,
+	CategorySubDescription 
+	) 
+
+Product ( Id* , 
+	CategroyId** ,
+	SubCategoryId** ,
+	ProductName , 
+	ProductPrice , 
+	ProductQuantity , 
+	ProductStatus , 
+	ProductThumbnail , 
+	ProductImages[]  
+	)
+Cart ( 
+	Id* ,
+	ProductId** ,
+	OrderId** ,
+	quantity ,
+	size 
+)
+Order ( Id* , 
+	CustomerId** ,
+	phone ,
+	CustomerName ,
+	Address ,
+	City ,
+	OrderStatus , 
+	)
+
+
+Customer (
+	Id* ,
+	firstname ,
+	lastname ,
+	username ,
+	email , 
+	password 
+	)
+Rating (
+	Id* ,
+	productId** ,
+	customerId ,
+	score 
+	)
+Feedback (
+	Id* ,
+	CustomerId** ,
+	ProductId** , 
+	comment 
+
+	)
+
