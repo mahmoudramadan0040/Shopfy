@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Shopfy.Models;
 using Shopfy.Models.Interfaces;
+using Shopfy.Utils;
 using Shopfy.ViewModels.Dtos;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.Xml;
 
 namespace Shopfy.Controllers
 {
@@ -12,16 +17,22 @@ namespace Shopfy.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly IStorageRepository _storageRepository;
+        private readonly IProductImageRepository _productImageRepository;
         private readonly ILogger<ProductController> _logger;
         private readonly IMapper _mapper;
         public ProductController(
             ILogger<ProductController> logger,
             IProductRepository productRepository,
-            IMapper mapper)
+            IStorageRepository storageRepository,
+            IProductImageRepository productImageRepository,
+        IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;
             _productRepository = productRepository;
+            _storageRepository = storageRepository;
+            _productImageRepository = productImageRepository;
         }
         #region Get all Product 
         #endregion
@@ -69,10 +80,11 @@ namespace Shopfy.Controllers
             }
         }
         [HttpPost]
-        public IActionResult CreateProduct(ProductDto product)
+        public async Task<IActionResult> CreateProduct([FromForm] ProductDto product)
         {
             try
             {
+                
                 if(product is null)
                 {
                     _logger.LogError("product object sent from client is null ");
@@ -84,13 +96,68 @@ namespace Shopfy.Controllers
                     _logger.LogError("Invalid object sent from client ! ");
                     return BadRequest("Invalid product object !");
                 }
+                // check the thumbnailfile is image or not 
+                if (!product.ProductThumbnail.IsImage())
+                    return BadRequest("product Thumbnail is not image !");
+                // check the number of image uploaded 
+                if (!(product.ProductImages.Length < 5))
+                    return BadRequest("Too image uploaded for product ! , maximum image is 5 images !");
+                // check the files is images or not
+                foreach (var img in product.ProductImages)
+                {
+                    if (!img.IsImage())
+                        return BadRequest($"this file is not image ${img.FileName}");
+                }
 
                 var ProductMap = _mapper.Map<Product>(product);
                 var result = _productRepository.CreateProduct(ProductMap);
+                // upload image to storage 
+                await _storageRepository.AddImage(product.ProductThumbnail, "ProductsThumbnails");
+
+
+
+                List<ProductImage> productImages = new List<ProductImage>();
+                foreach (var img in product.ProductImages)
+                {
+                    var url= await _storageRepository.AddImage(img, "ProductsImages");
+
+                    ProductImage image = new ProductImage
+                    {
+                        ProductId = result.ProductId,
+                        ImageUrl = url
+                    };
+                    _logger.LogDebug(image.ToString());
+                    productImages.Add(image);
+                    _logger.LogDebug(image.ToString());
+
+                }
+                _logger.LogDebug(productImages.ToString());
+                _productImageRepository.InsertImages(productImages);
+                _logger.LogDebug(productImages.ToString());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 return Ok(result);
             } catch (Exception ex)
             {
-                _logger.LogError("Not found any Product : {ex}", ex);
+                _logger.LogError("Can not create product : {ex}", ex);
                 return StatusCode(500, "Internal server error");
             }
         }

@@ -1,4 +1,6 @@
-﻿namespace Shopfy.ViewModels.Dtos
+﻿using Shopfy.Models;
+
+namespace Shopfy.ViewModels.Dtos
 {
     public record ProductDto(
         string ProductName,
@@ -6,7 +8,7 @@
         int ProductPrice,
         int ProductQuantity,
         string ProductStatus,
-        DateTime? CreatedDate,
-        DateTime? UpdateDate
+        IFormFile ProductThumbnail,
+        IFormFile[] ProductImages
         );
 }

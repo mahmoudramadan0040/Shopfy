@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shopfy.Models;
 
@@ -11,9 +12,11 @@ using Shopfy.Models;
 namespace Shopfy.Migrations
 {
     [DbContext(typeof(ShopfyDbContext))]
-    partial class ShopfyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240127131759_add_thumbnail_images")]
+    partial class add_thumbnail_images
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

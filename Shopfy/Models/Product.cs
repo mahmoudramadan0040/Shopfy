@@ -19,8 +19,8 @@ namespace Shopfy.Models
         public int ProductPrice { get; set; }
 
         public int ProductQuantity { get; set; }
-        public string ProductThumbnail { get; set; }
-        public string ProductStatus { get; set; }
+        public string? ProductThumbnail { get; set; }
+        public string? ProductStatus { get; set; }
 
 
         // product have multiple rate 
@@ -39,7 +39,7 @@ namespace Shopfy.Models
         [ForeignKey("ProductId")]
         public Guid ProductId { get; set; } // Foreign key
 
-        public string ImageUrl { get; set; } // Image URL
-        public Product Product { get; set; } // Navigation property to Product
+        public string? ImageUrl { get; set; } // Image URL
+        /*public Product Product { get; set; } // Navigation property to Product*/
     }
 }

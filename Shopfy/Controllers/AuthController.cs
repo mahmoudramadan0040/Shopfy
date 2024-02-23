@@ -74,6 +74,7 @@ namespace Shopfy.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] Register model)
         {
+            
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Models.Response { Status = "Error", Message = "User already exists!" });
@@ -85,6 +86,8 @@ namespace Shopfy.Controllers
                 UserName = model.Username
             };
             var result = await _userManager.CreateAsync(user, model.Password);
+            
+
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Models.Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 

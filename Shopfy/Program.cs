@@ -1,3 +1,4 @@
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,23 +10,31 @@ using Shopfy.Models.Interfaces;
 using Shopfy.Models.Repository;
 using System.Text;
 
-// Create Serilog configuration 
+//-------------------------------------------------------//
+//       Create Serilog configuration                   //
+//-----------------------------------------------------//
+
 Log.Logger = new LoggerConfiguration()
        .MinimumLevel.Debug()
        .WriteTo.Console()
        .WriteTo.File("Logs/log.txt",rollingInterval:RollingInterval.Day)
        .CreateLogger();
+//=======================================================//
 
        
 var builder = WebApplication.CreateBuilder(args);
-// Serilog configuration 
+
+//-------------------------------------------------------//
+//       Serilog configuration                          //
+//-----------------------------------------------------//
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Host.UseSerilog();
 // end config serilog 
 
-// Add services to the container.
 
+
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -35,17 +44,25 @@ builder.Services.AddDbContext<ShopfyDbContext>(options => {
     options.UseSqlServer(
         builder.Configuration["ConnectionStrings:ShopfyDbContextConnection"]);
 });
+
+
+//-------------------------------------------------------//
+//        Add Identity  configuration                   //
+//-----------------------------------------------------//
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
 {
     o.Password.RequireDigit = true;
     o.Password.RequireLowercase = false;
     o.Password.RequireUppercase = false;
     o.Password.RequireNonAlphanumeric = false;
-    o.Password.RequiredLength = 10;
+    o.Password.RequiredLength = 4;
     o.User.RequireUniqueEmail = true;
 }).AddEntityFrameworkStores<ShopfyDbContext>()
 .AddDefaultTokenProviders();
-// Adding Authentication
+
+//-------------------------------------------------------//
+//              Adding Authentication                   //
+//-----------------------------------------------------//
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -71,14 +88,35 @@ builder.Services.AddAuthentication(options =>
         };
 #pragma warning restore CS8604 // Possible null reference argument.
     });
+//-------------------------------------------------------//
+//              ---------------------                   //
+//-----------------------------------------------------//
 
-// activate service repos
+
+
+//-------------------------------------------------------//
+//              activate service repos                  //
+//-----------------------------------------------------//
+
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddSingleton<IStorageRepository, S3StorageRepository>();
+
+//-------------------------------------------------------//
+//              add mapper configration                 //
+//-----------------------------------------------------//
 builder.Services.AddAutoMapper(typeof(Program));
+//-------------------------------------------------------//
+//              add AWS configration                    //
+//-----------------------------------------------------//
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
