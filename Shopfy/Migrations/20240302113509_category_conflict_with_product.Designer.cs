@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shopfy.Models;
 
@@ -11,9 +12,11 @@ using Shopfy.Models;
 namespace Shopfy.Migrations
 {
     [DbContext(typeof(ShopfyDbContext))]
-    partial class ShopfyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302113509_category_conflict_with_product")]
+    partial class category_conflict_with_product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

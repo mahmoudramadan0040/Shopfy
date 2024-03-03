@@ -8,7 +8,7 @@ namespace Shopfy.Models
         public Guid ProductId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public Guid CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
 /*        [ForeignKey("SubCategoryId")]
         public Guid SubCategoryId { get; set; }*/
         [Required(ErrorMessage = "Product Name is required")]
@@ -28,7 +28,7 @@ namespace Shopfy.Models
         // product have multiple feed back 
         public ICollection<Feedback>? Feedbacks { get; set; } = new List<Feedback>();
 
-        public ICollection<ProductImage> ProductImages { get; set; }
+        public ICollection<ProductImage>? ProductImages { get; set; }
 
 
     }
@@ -37,7 +37,7 @@ namespace Shopfy.Models
         public Guid ProductImageId { get; set; } // Primary key
 
         [ForeignKey("ProductId")]
-        public Guid ProductId { get; set; } // Foreign key
+        public Guid? ProductId { get; set; } // Foreign key
 
         public string? ImageUrl { get; set; } // Image URL
         /*public Product Product { get; set; } // Navigation property to Product*/

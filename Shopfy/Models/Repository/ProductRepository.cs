@@ -18,6 +18,7 @@ namespace Shopfy.Models.Repository
         public void DeleteProduct(Product product)
         {
             _context.Products.Remove(product);
+            _context.SaveChanges();
         }
 
         public IEnumerable<Product> GetAllProduct()
@@ -27,8 +28,9 @@ namespace Shopfy.Models.Repository
 
         public Product? GetProductById(Guid id)
         {
-            return _context.Products
-                .Where(e => e.ProductId == id).AsNoTracking().FirstOrDefault();
+            var product = _context.Products
+                .Where(e => e.ProductId == id).Include(image => image.ProductImages).AsNoTracking().FirstOrDefault();
+            return product;
         }
 
         public Product? GetProductByName(string name)
@@ -45,6 +47,7 @@ namespace Shopfy.Models.Repository
         }
         public Product CreateProduct(Product product)
         {
+
             _context.Products.Add(product);
             _context.SaveChanges();
             return product;

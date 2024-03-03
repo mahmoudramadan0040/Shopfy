@@ -110,51 +110,36 @@ namespace Shopfy.Controllers
                 }
 
                 var ProductMap = _mapper.Map<Product>(product);
-                var result = _productRepository.CreateProduct(ProductMap);
-                // upload image to storage 
-                await _storageRepository.AddImage(product.ProductThumbnail, "ProductsThumbnails");
+                
+                //var result = _productRepository.CreateProduct(ProductMap);
+                // upload thumbnail image to storage 
+                var ProductThumbUrl = await _storageRepository.AddImage(product.ProductThumbnail, "ProductsThumbnails");
+                // store the access url of image 
+                ProductMap.ProductThumbnail = ProductThumbUrl;
 
 
 
                 List<ProductImage> productImages = new List<ProductImage>();
+                ProductMap.ProductImages = new List<ProductImage>();
                 foreach (var img in product.ProductImages)
                 {
                     var url= await _storageRepository.AddImage(img, "ProductsImages");
-
+                    _logger.LogInformation(url.ToString());
                     ProductImage image = new ProductImage
                     {
-                        ProductId = result.ProductId,
+                        
                         ImageUrl = url
                     };
-                    _logger.LogDebug(image.ToString());
-                    productImages.Add(image);
-                    _logger.LogDebug(image.ToString());
+                    _logger.LogInformation(image.ImageUrl.ToString());
+                   
+                    ProductMap.ProductImages.Add(image);
+
+
 
                 }
-                _logger.LogDebug(productImages.ToString());
-                _productImageRepository.InsertImages(productImages);
-                _logger.LogDebug(productImages.ToString());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                return Ok(result);
+                 var Createdproduct = _productRepository.CreateProduct(ProductMap);
+                       
+                return Ok(Createdproduct);
             } catch (Exception ex)
             {
                 _logger.LogError("Can not create product : {ex}", ex);

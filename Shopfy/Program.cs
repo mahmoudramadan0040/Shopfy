@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using ServiceStack.Text;
 using Shopfy.Models;
 using Shopfy.Models.Interfaces;
 using Shopfy.Models.Repository;
@@ -104,7 +106,8 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
-builder.Services.AddSingleton<IStorageRepository, S3StorageRepository>();
+/*builder.Services.AddSingleton<IStorageRepository, S3StorageRepository>();*/
+builder.Services.AddSingleton<IStorageRepository, LocalStorageRepository>();
 
 //-------------------------------------------------------//
 //              add mapper configration                 //
@@ -125,7 +128,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+    Path.Combine(builder.Environment.ContentRootPath, "Resources")),
+    RequestPath = "/resources"
+});
 app.UseHttpsRedirection();
 // Authentication & Authorization
 app.UseAuthorization();
