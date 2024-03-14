@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Shopfy.Migrations;
+using System.Text.RegularExpressions;
 
 namespace Shopfy.Models.Repository
 {
@@ -23,7 +25,7 @@ namespace Shopfy.Models.Repository
             _logger = logger;
 
         }
-        public async Task<string> AddImage(IFormFile file, string readerName)
+        public async Task<string> AddImage(IFormFile file)
         {
             try
             {
@@ -59,14 +61,34 @@ namespace Shopfy.Models.Repository
 
         }
 
-        public string GeneratePreSignedURL(string objectKey)
+        public async Task DeleteImages(ICollection<ProductImage> images)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                foreach(var image in images)
+                {
 
-        public Task<byte[]> GetItem(string objectKey)
-        {
-            throw new NotImplementedException();
+                   
+                    string pattern = "http://localhost:5236";
+                    string cleanPath = Regex.Replace(image.ImageUrl, pattern, string.Empty) ?? throw new ArgumentNullException(nameof(image.ImageUrl));
+                    var imagePath = Path.Combine("Resources", "Images", cleanPath);
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                    else
+                    {
+                        // Handle case where the image file doesn't exist
+                        throw new FileNotFoundException($"Image file '{imagePath}' not found.");
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions (e.g., logging, error messages, etc.)
+                throw new ApplicationException($"Error deleting file: {ex}");
+            }
         }
     }
 }

@@ -113,7 +113,7 @@ namespace Shopfy.Controllers
                 
                 //var result = _productRepository.CreateProduct(ProductMap);
                 // upload thumbnail image to storage 
-                var ProductThumbUrl = await _storageRepository.AddImage(product.ProductThumbnail, "ProductsThumbnails");
+                var ProductThumbUrl = await _storageRepository.AddImage(product.ProductThumbnail);
                 // store the access url of image 
                 ProductMap.ProductThumbnail = ProductThumbUrl;
 
@@ -123,18 +123,13 @@ namespace Shopfy.Controllers
                 ProductMap.ProductImages = new List<ProductImage>();
                 foreach (var img in product.ProductImages)
                 {
-                    var url= await _storageRepository.AddImage(img, "ProductsImages");
-                    _logger.LogInformation(url.ToString());
+                    var url= await _storageRepository.AddImage(img);
+                    
                     ProductImage image = new ProductImage
-                    {
-                        
+                    {  
                         ImageUrl = url
                     };
-                    _logger.LogInformation(image.ImageUrl.ToString());
-                   
                     ProductMap.ProductImages.Add(image);
-
-
 
                 }
                  var Createdproduct = _productRepository.CreateProduct(ProductMap);
@@ -153,12 +148,21 @@ namespace Shopfy.Controllers
             try
             {
                 var product = _productRepository.GetProductById(productId);
+                
                 if(product is null)
                 {
                     _logger.LogError($"product with id : {productId} , hasn't been found in db !");
                     return NotFound($"product with id : {productId} , hasn't been found in db !");
                 }
+
+                // delete form local storage 
+                if (product.ProductImages is not null)
+                    _storageRepository.DeleteImages(product.ProductImages);
+                else
+                    throw new Exception("can not delete the images !");
+                // delete form database
                 _productRepository.DeleteProduct(product);
+
                 return Accepted("product is deleted successfully");
             }
             catch (Exception ex)

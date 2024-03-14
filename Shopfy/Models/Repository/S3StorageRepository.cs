@@ -25,37 +25,47 @@ namespace Shopfy.Models.Repository
             _logger = logger;
         }
 
-
-
-
-        public async Task<string> AddImage(IFormFile file, string readerName)
+        public Task<string> AddImage(IFormFile file)
         {
-            string fileName = file.FileName;
-            string objectKey = $"{FOLDER_NAME}/{readerName}/{fileName}";
-            try
-            {
-                using (Stream fileToUpload = file.OpenReadStream())
-                {
-                    var putObjectRequest = new PutObjectRequest();
-                    putObjectRequest.BucketName = bucketName;
-                    putObjectRequest.Key = objectKey;
-                    putObjectRequest.InputStream = fileToUpload;
-                    putObjectRequest.ContentType = file.ContentType;
-
-                    var response = await _s3Client.PutObjectAsync(putObjectRequest);
-                    return GeneratePreSignedURL(objectKey);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error when upload image to s3 bucket : {ex}", ex);
-                return "";
-            }
-
-            
+            throw new NotImplementedException();
         }
 
-        public string GeneratePreSignedURL(string objectKey)
+        public Task DeleteImages(ICollection<ProductImage> images)
+        {
+            throw new NotImplementedException();
+        }
+
+        
+
+
+        /* public async Task<string> AddImage(IFormFile file, string readerName)
+         {
+             string fileName = file.FileName;
+             string objectKey = $"{FOLDER_NAME}/{readerName}/{fileName}";
+             try
+             {
+                 using (Stream fileToUpload = file.OpenReadStream())
+                 {
+                     var putObjectRequest = new PutObjectRequest();
+                     putObjectRequest.BucketName = bucketName;
+                     putObjectRequest.Key = objectKey;
+                     putObjectRequest.InputStream = fileToUpload;
+                     putObjectRequest.ContentType = file.ContentType;
+
+                     var response = await _s3Client.PutObjectAsync(putObjectRequest);
+                     return GeneratePreSignedURL(objectKey);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 _logger.LogError("Error when upload image to s3 bucket : {ex}", ex);
+                 return "";
+             }
+
+
+         }*/
+
+        /*public string GeneratePreSignedURL(string objectKey)
         {
             var request = new GetPreSignedUrlRequest
             {
@@ -67,9 +77,9 @@ namespace Shopfy.Models.Repository
 
             string url = _s3Client.GetPreSignedURL(request);
             return url;
-        }
+        }*/
 
-        public async Task<byte[]> GetItem(string objectKey)
+        /*public async Task<byte[]> GetItem(string objectKey)
         {
             GetObjectResponse response = await _s3Client.GetObjectAsync(bucketName, objectKey);
             MemoryStream memoryStream = new MemoryStream();
@@ -78,6 +88,6 @@ namespace Shopfy.Models.Repository
             responseStream.CopyTo(memoryStream);
 
             return memoryStream.ToArray();
-        }
+        }*/
     }
 }

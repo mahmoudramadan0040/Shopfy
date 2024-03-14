@@ -2,10 +2,11 @@
 {
     public interface IProductImageRepository
     {
-        public void InsertThumbnail();
+       
         public void InsertImages(List<ProductImage> productImages);
-        public void DeleteImage();
-        public void UpdateImage(ProductImage image);
+        public void DeleteImage(Guid productId);
+        public void UpdateImage(List<ProductImage> productImages);
+        
 
     }
 }

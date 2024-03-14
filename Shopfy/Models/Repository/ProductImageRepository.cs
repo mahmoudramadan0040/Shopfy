@@ -14,27 +14,25 @@ namespace Shopfy.Models.Repository
 
             _context.ProductImages.AddRange(images);
         }
-        public void InsertThumbnail()
+        
+        public void DeleteImage(Guid productId)
         {
-            throw new NotImplementedException();
-        }
-        public void DeleteImage()
-        {
-            throw new NotImplementedException();
+            // remove data from database
+            var images = _context.ProductImages.Where(p => p.ProductId == productId)
+                ?? throw new ArgumentNullException(); 
+            _context.ProductImages.RemoveRange(images);
+           
         }
 
        
 
-        public void UpdateImage(ProductImage image)
+        public void UpdateImage(List<ProductImage> productImages)
         {
-            throw new NotImplementedException();
+            _context.ProductImages.UpdateRange(productImages);
         }
 
-        public void InsertImage()
-        {
-            throw new NotImplementedException();
-        }
 
-        
+
+       
     }
 }
