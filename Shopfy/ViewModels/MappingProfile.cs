@@ -24,6 +24,9 @@ namespace Shopfy.ViewModels
             CreateMap<ProductDto, Product>()
                 .ForMember(p => p.ProductImages,opt => opt.Ignore())
                 .ForMember(p=> p.ProductThumbnail,opt => opt.Ignore());
+            #region mapping order object 
+            #endregion
+            CreateMap<OrderDto, Order>();
 
         }
     }

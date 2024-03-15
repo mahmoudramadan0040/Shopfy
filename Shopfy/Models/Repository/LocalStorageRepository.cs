@@ -69,17 +69,15 @@ namespace Shopfy.Models.Repository
                 {
 
                    
-                    string pattern = "http://localhost:5236";
-                    string cleanPath = Regex.Replace(image.ImageUrl, pattern, string.Empty) ?? throw new ArgumentNullException(nameof(image.ImageUrl));
-                    var imagePath = Path.Combine("Resources", "Images", cleanPath);
-                    if (System.IO.File.Exists(imagePath))
+                    
+                    if (System.IO.File.Exists(image.ImageUrl))
                     {
-                        System.IO.File.Delete(imagePath);
+                        System.IO.File.Delete(image.ImageUrl);
                     }
                     else
                     {
                         // Handle case where the image file doesn't exist
-                        throw new FileNotFoundException($"Image file '{imagePath}' not found.");
+                        throw new FileNotFoundException($"Image file '{image.ImageUrl}' not found.");
                     }
                 }
                 

@@ -1,42 +1,73 @@
-﻿using Shopfy.Models.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Shopfy.Models.Interfaces;
 
 namespace Shopfy.Models.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        public bool ChangeOrderStatus(Guid orderId)
+        private readonly ShopfyDbContext _context;
+        public OrderRepository(ShopfyDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
-
-        public void CreateOrder(Order order)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteOrder(Guid orderId)
-        {
-            throw new NotImplementedException();
-        }
-
+        #region retrive orders using id or customerId or retrive all 
+        #endregion
         public IEnumerable<Order> GetAll()
         {
-            throw new NotImplementedException();
+            return _context.Orders.AsNoTracking();
         }
 
         public IEnumerable<Order> GetOrderByCustomer(Guid customerId)
         {
-            throw new NotImplementedException();
+            var orders = _context.Orders.Where(c => c.CustomerId == customerId).AsNoTracking();
+            return orders;
         }
 
-        public IEnumerable<Order> GetOrderById(Guid orderId)
+        public Order GetOrderById(Guid orderId)
         {
-            throw new NotImplementedException();
+            return _context.Orders.Where(o => o.OrderId == orderId).AsNoTracking().FirstOrDefault()
+                ?? throw new NullReferenceException(); 
+        }
+        public bool ChangeOrderStatus(Guid orderId, OrderStatus status)
+        {
+            string[] OrderState= { "Processing", "Shipped", "Delivered" };
+            var order = _context.Orders.FirstOrDefault(o => o.OrderId ==  orderId);
+            if (order != null && OrderState.Contains(status.ToString()))
+            {
+                order.OrderStatus = status;
+                _context.SaveChanges();
+                return true;
+            }else
+            {
+                return false;
+            }
         }
 
-        public void UpdateOrder(Order order)
+        public Order CreateOrder(Order order)
         {
-            throw new NotImplementedException();
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
+        }
+
+        public void DeleteOrder(Guid orderId)
+        {
+            var order = _context.Orders.FirstOrDefault(o => o.OrderId == orderId);
+            if (order != null)
+            {
+                _context.Orders.Remove(order);
+                _context.SaveChanges();
+            }
+
+        }
+
+        
+
+        public Order UpdateOrder(Order order)
+        {
+            _context.Orders.Update(order);
+            _context.SaveChanges();
+            return order;
         }
     }
 }
