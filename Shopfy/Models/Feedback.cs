@@ -10,9 +10,6 @@ namespace Shopfy.Models
         public Guid? CutomerId { get; set; }
         [ForeignKey("ProductId")]
         public Guid ProductId { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
-
 
     }
 }

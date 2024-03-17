@@ -12,7 +12,7 @@ namespace Shopfy.Models
 /*        [ForeignKey("SubCategoryId")]
         public Guid SubCategoryId { get; set; }*/
         [Required(ErrorMessage = "Product Name is required")]
-        public string ProductName { get; set; }
+        public string? ProductName { get; set; }
 
         public string? ProductDescription { get; set; }
         [Required(ErrorMessage = "product price is required")]
@@ -20,7 +20,7 @@ namespace Shopfy.Models
 
         public int ProductQuantity { get; set; }
         public string? ProductThumbnail { get; set; }
-        public string? ProductStatus { get; set; }
+        public ProductStatus? ProductStatus { get; set; }
 
 
         // product have multiple rate 
@@ -31,6 +31,11 @@ namespace Shopfy.Models
         public ICollection<ProductImage>? ProductImages { get; set; }
 
 
+    }
+    public enum ProductStatus
+    {
+        Available,
+        OutOfStock
     }
     public class ProductImage
     {

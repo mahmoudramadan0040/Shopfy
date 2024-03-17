@@ -1,4 +1,6 @@
-﻿namespace Shopfy.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Shopfy.Models
 {
     public class Order:BaseEntity
     {
@@ -30,6 +32,8 @@
     }
     public class OrderItem
     {
+        
+        public Guid Id { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public int Quantity { get; set; }

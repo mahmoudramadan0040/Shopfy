@@ -1,4 +1,4 @@
-using Amazon.S3;
+﻿using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,7 @@ using Shopfy.Models;
 using Shopfy.Models.Interfaces;
 using Shopfy.Models.Repository;
 using System.Text;
+using Shopfy.Controllers;
 
 //-------------------------------------------------------//
 //       Create Serilog configuration                   //
@@ -140,5 +141,7 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 app.MapControllers();
+
+
 
 app.Run();
